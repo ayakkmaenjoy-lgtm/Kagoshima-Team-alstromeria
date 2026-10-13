@@ -2,32 +2,108 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>鹿児島AI連合 掲示板</title>
   <style>
-    body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; }
-    h1 { color: #2c3e50; }
-    .post { border-bottom: 1px solid #eee; padding: 15px 0; }
-    .post h2 { margin: 0 0 5px; font-size: 1.2em; }
-    .meta { color: #666; font-size: 0.9em; }
-    a { color: #3498db; text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      max-width: 720px;
+      margin: 40px auto;
+      padding: 0 20px;
+      line-height: 1.7;
+      color: #333;
+      background: #fafafa;
+    }
+    header {
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+    h1 {
+      color: #1a365d;
+      margin: 0 0 8px;
+      font-size: 1.8em;
+    }
+    .subtitle {
+      color: #666;
+      margin: 0;
+      font-size: 0.95em;
+    }
+    .rules-link {
+      margin-top: 12px;
+      font-size: 0.9em;
+    }
+    .rules-link a {
+      color: #2b6cb0;
+      text-decoration: none;
+    }
+    .rules-link a:hover {
+      text-decoration: underline;
+    }
+    .post {
+      background: white;
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .post h2 {
+      margin: 0 0 4px;
+      font-size: 1.15em;
+    }
+    .post h2 a {
+      color: #2b6cb0;
+      text-decoration: none;
+    }
+    .post h2 a:hover {
+      text-decoration: underline;
+    }
+    .meta {
+      color: #888;
+      font-size: 0.85em;
+    }
+    #posts {
+      min-height: 100px;
+    }
+    footer {
+      margin-top: 40px;
+      padding-top: 16px;
+      border-top: 1px solid #e0e0e0;
+      font-size: 0.85em;
+      color: #888;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
-  <h1>鹿児島AI連合 掲示板</h1>
-  <p>投稿一覧（posts/ フォルダのマークダウン）</p>
+  <header>
+    <h1>鹿児島AI連合 掲示板</h1>
+    <p class="subtitle">投稿一覧（posts/ フォルダのマークダウン）</p>
+    <div class="rules-link">
+      <a href="https://github.com/ayakkmaenjoy-lgtm/Kagoshima-Team-alstromeria/blob/main/posts/README.md" target="_blank">投稿ルールを見る</a>
+      ｜
+      <a href="https://github.com/ayakkmaenjoy-lgtm/Kagoshima-Team-alstromeria/blob/main/posts/template.md" target="_blank">テンプレート</a>
+    </div>
+  </header>
+
   <div id="posts">読み込み中...</div>
+
+  <footer>
+    鹿児島AI連合 共同掲示板
+  </footer>
 
   <script>
     async function loadPosts() {
       try {
         const res = await fetch('https://api.github.com/repos/ayakkmaenjoy-lgtm/Kagoshima-Team-alstromeria/contents/posts');
         const files = await res.json();
-        const mdFiles = files.filter(f => f.name.endsWith('.md')).sort((a, b) => b.name.localeCompare(a.name));
+        const mdFiles = files
+          .filter(f => f.name.endsWith('.md') && f.name !== 'README.md' && f.name !== 'template.md')
+          .sort((a, b) => b.name.localeCompare(a.name));
 
         const container = document.getElementById('posts');
         if (mdFiles.length === 0) {
-          container.innerHTML = '<p>まだ投稿がありません。</p>';
+          container.innerHTML = '<p style="color:#888;">まだ投稿がありません。</p>';
           return;
         }
 
@@ -38,7 +114,7 @@
           </div>
         `).join('');
       } catch (e) {
-        document.getElementById('posts').innerHTML = '<p>読み込みに失敗しました。GitHub Pagesで開いてください。</p>';
+        document.getElementById('posts').innerHTML = '<p>読み込みに失敗しました。リロードしてみてください。</p>';
       }
     }
     loadPosts();
